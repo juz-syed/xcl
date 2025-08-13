@@ -2,7 +2,7 @@
 
 <div class="content" id="content">
     <h1>Good Morning, Super Admin</h1>
-    <p>Welcome to your dashboard!</p>
+    <p>Welcome to his dashboard!</p>
 </div>
 
 <script>
@@ -12,6 +12,8 @@ function toggleSidebar() {
     document.getElementById('content').classList.toggle('collapsed');
 }
 </script>
+
+
 
 </body>
 </html>
