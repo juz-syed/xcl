@@ -8,6 +8,8 @@
         <meta name="description" content="SportsCup - Bootstrap 4 Theme for Sports">
         <meta name="author" content="iwthemes.com">
 
+
+        
         <!-- Mobile Metas -->
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- Theme CSS -->

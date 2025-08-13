@@ -73,8 +73,8 @@ if ($stmt->execute()) {
     </div>
     <script>
         setTimeout(function(){
-            window.location.href = 'player_reg.php';
-        }, 2000);
+            window.location.href = 'login_form.php';
+        }, 1000);
     </script>
     ";
 } else {
@@ -84,8 +84,8 @@ if ($stmt->execute()) {
     </div>
     <script>
         setTimeout(function(){
-            window.location.href = 'player_reg.php';
-        }, 2000);
+            window.location.href = 'login_form.php';
+        }, 1000);
     </script>
     ";
 }
