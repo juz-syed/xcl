@@ -1,45 +1,52 @@
 <?php
-include 'db.php';
-session_start();
+require 'db.php';
 
-$error = '';
+// Start session only if none exists
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
-// CSRF token (simple)
+$error = "";
+
+// Create CSRF token if not exists
 if (empty($_SESSION['csrf'])) {
     $_SESSION['csrf'] = bin2hex(random_bytes(32));
 }
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // CSRF check
+
+    // CSRF token check
     if (!hash_equals($_SESSION['csrf'], $_POST['csrf'] ?? '')) {
         $error = "Something went wrong. Please try again.";
     } else {
         $email = strtolower(trim($_POST['email'] ?? ''));
         $password = $_POST['password'] ?? '';
 
-        // Server-side validation
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $error = "Invalid email or password";
-        } elseif ($password === '') {
-            $error = "Invalid email or password";
+        // Validate inputs
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL) || empty($password)) {
+            $error = "Invalid email or password.";
         } else {
-            // Query
-            $stmt = $conn->prepare("SELECT id, password FROM users WHERE email = ? LIMIT 1");
+            // Query user
+            $stmt = $conn->prepare("SELECT id, full_name, profile_photo, password FROM users WHERE email = ? LIMIT 1");
             $stmt->bind_param("s", $email);
             $stmt->execute();
-            $stmt->bind_result($id, $hashed_password);
+            $stmt->store_result();
 
-            if ($stmt->fetch() && password_verify($password, $hashed_password)) {
-                // Success: rotate session ID
-                session_regenerate_id(true);
-                $_SESSION['user_id'] = $id;
-                $stmt->close();
-                header("Location: registration.php");
-                exit;
-            } else {
-                $error = "Invalid email or password";
+            if ($stmt->num_rows === 1) {
+                $stmt->bind_result($id, $full_name, $profile_photo, $hashed_password);
+                $stmt->fetch();
+
+                if (password_verify($password, $hashed_password)) {
+    session_regenerate_id(true); // secure session
+    $_SESSION['user_id'] = $id;
+    $_SESSION['full_name'] = $full_name;
+    $_SESSION['profile_photo'] = $profile_photo ?: "default.jpg"; // fallback
+    header("Location: registration.php"); // or dashboard page
+    exit;
+}
+
             }
-
+            $error = "Invalid email or password.";
             $stmt->close();
         }
     }
@@ -55,15 +62,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
 <style>
     body {
         margin: 0;
         padding: 0;
         height: 100vh;
-        background: linear-gradient(135deg, #4facfe, #00f2fe); /* same as signup.php */
-        font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        background: linear-gradient(135deg, #eff3f7ff, #eff3f7ff);
+        font-family: 'Poppins', sans-serif;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -88,7 +95,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         text-align: center;
     }
     .btn-custom {
-        background: linear-gradient(90deg, #4facfe, #00f2fe);
+        background: linear-gradient(90deg, #424344ff, #424344ff);
         color: #fff;
         border-radius: 25px;
         padding: 10px 20px;
@@ -96,7 +103,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         font-weight: 600;
         transition: transform .2s ease, filter .2s ease;
     }
-    .btn-custom:hover { transform: translateY(-1px); filter: brightness(1.04); }
+    .btn-custom:hover {
+        background: linear-gradient(90deg,  #424344ff, #424344ff);
+        transform: scale(1.05);
+    }
     label { font-weight: 600; color: #333; margin-bottom: 6px; }
     .form-control { border-radius: 12px; padding: 10px 12px; }
     .alert { padding: 10px; font-size: 14px; border-radius: 10px; }

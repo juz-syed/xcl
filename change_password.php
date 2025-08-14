@@ -69,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         margin: 0;
         padding: 0;
         height: 100vh;
-        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        background: linear-gradient(135deg, #eff3f7ff, #eff3f7ff);
         font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
         display: flex;
         justify-content: center;
@@ -95,15 +95,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         text-align: center;
     }
     .btn-custom {
-        background: linear-gradient(90deg, #4facfe, #00f2fe);
+        background: linear-gradient(90deg, #424344ff, #424344ff);
         color: #fff;
         border-radius: 25px;
         padding: 10px 20px;
         border: none;
         font-weight: 600;
         transition: transform .2s ease, filter .2s ease;
-    }
-    .btn-custom:hover { transform: translateY(-1px); filter: brightness(1.04); }
+    }.btn-custom:hover {
+            background: linear-gradient(90deg,  #424344ff, #424344ff);
+            transform: scale(1.05);
+        }
     label { font-weight: 600; color: #333; margin-bottom: 6px; }
     .form-control { border-radius: 12px; padding: 10px 12px; }
     .alert { padding: 10px; font-size: 14px; border-radius: 10px; }

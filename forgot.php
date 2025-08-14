@@ -48,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         margin: 0;
         padding: 0;
         height: 100vh;
-        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        background: linear-gradient(135deg, #eff3f7ff, #eff3f7ff);
         font-family: 'Poppins', sans-serif;
         display: flex;
         justify-content: center;
@@ -73,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         text-align: center;
     }
     .btn-custom {
-        background: linear-gradient(90deg, #4facfe, #00f2fe);
+        background: linear-gradient(90deg, #424344ff, #424344ff);
         color: white;
         border-radius: 25px;
         padding: 10px 20px;
@@ -82,7 +82,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         transition: all 0.3s ease;
     }
     .btn-custom:hover {
-        background: linear-gradient(90deg, #00c6ff, #4facfe);
+        background: linear-gradient(90deg,  #424344ff, #424344ff);
         transform: scale(1.05);
     }
     label {
