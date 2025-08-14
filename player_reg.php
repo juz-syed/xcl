@@ -1,5 +1,9 @@
 <?php
-require 'db.php';
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login_form.php"); 
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -17,55 +21,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $stmt = $conn->prepare($sql);
 
-    $stmt->bind_param(
-        "ssssssssssssssssssssssssssssssssssssssssssssss",
-        $_POST['full_name'],
-        $_POST['dob'],
-        $_POST['gender'],
-        $_POST['nationality'],
-        $_POST['address'],
-        $_POST['city'],
-        $_POST['state'],
-        $_POST['country'],
-        $_POST['mobile'],
-        $_POST['whatsapp'],
-        $_POST['email'],
-        $_POST['alt_email'],
-        $_POST['id_type'],
-        $_POST['id_number'],
-        $_POST['photo_id'],
-        $_POST['passport_photo'],
-        $_POST['resume_profile'],
-        $_POST['cricket_certifications'],
-        $_POST['batting_style'],
-        $_POST['bowling_style'],
-        $_POST['primary_role'],
-        $_POST['secondary_role'],
-        $_POST['experience_years'],
-        $_POST['highest_level'],
-        $_POST['club_team'],
-        $_POST['jersey_size'],
-        $_POST['citizen_franchise'],
-        $_POST['played_t20'],
-        $_POST['t20_details'],
-        $_POST['familiar_rules'],
-        $_POST['open_training'],
-        $_POST['weight_kg'],
-        $_POST['height_cm'],
-        $_POST['medical_conditions'],
-        $_POST['medication'],
-        $_POST['fit_for_cricket'],
-        $_POST['availability'],
-        $_POST['travel_international'],
-        $_POST['valid_passport'],
-        $_POST['passport_expiry'],
-        $_POST['emergency_name'],
-        $_POST['emergency_relation'],
-        $_POST['emergency_contact'],
-        $_POST['emergency_email'],
-        $_POST['confirm'],
-        $_POST['conduct']
-    );
+$stmt->bind_param(
+    "ssssssssssssssssssssssssssssssssssssssssssssss",
+    $_POST['full_name'], $_POST['dob'], $_POST['gender'], $_POST['nationality'], $_POST['address'], $_POST['city'], $_POST['state'], $_POST['country'], $_POST['mobile'], $_POST['whatsapp'], $_POST['email'], $_POST['alt_email'],
+    $_POST['id_type'], $_POST['id_number'], $_POST['photo_id'], $_POST['passport_photo'], $_POST['resume_profile'], $_POST['cricket_certifications'], $_POST['batting_style'], $_POST['bowling_style'], $_POST['primary_role'], $_POST['secondary_role'], $_POST['experience_years'], $_POST['highest_level'], $_POST['club_team'], $_POST['jersey_size'], $_POST['citizen_franchise'],
+    $_POST['played_t20'], $_POST['t20_details'], $_POST['familiar_rules'], $_POST['open_training'], $_POST['weight_kg'], $_POST['height_cm'], $_POST['medical_conditions'], $_POST['medication'], $_POST['fit_for_cricket'], $_POST['availability'], $_POST['travel_international'], $_POST['valid_passport'], $_POST['passport_expiry'],
+    $_POST['emergency_name'], $_POST['emergency_relation'], $_POST['emergency_contact'], $_POST['emergency_email'], $_POST['confirm'], $_POST['conduct']
+);
+
 if ($stmt->execute()) {
     echo "
     <div id='customAlert' class='alert-box success'>
@@ -118,14 +81,19 @@ body { background: #f8f9fa; }
     display: flex; align-items: center; justify-content: center;
     font-weight: bold; color: #fff;
 }
+/* Push page content down below the fixed topbar */
 .content-area {
-    margin-left: 250px;   /* same as .sidebar width */
+    margin-left: 250px; /* already in your code for sidebar space */
+    padding-top: 80px;  /* adjust this for your topbar height (e.g. 60–100px) */
 }
+
 @media (max-width: 600px) {
     .content-area {
         margin-left: 60px;
+        padding-top: 80px; /* keep same top spacing on mobile */
     }
 }
+
 .progress-step.active { background-color: #00cd8a; }
 .form-step { display: none; }
 .form-step.active { display: block; }
@@ -160,10 +128,11 @@ body { background: #f8f9fa; }
 </style>
 </head>
 <body>
-   <?php require ('header.php');?>
+<?php require ('topbar.php');?>
+<?php require ('sidebar.php');?>
 <div class="content-area">
 
-<div class="container my-4">
+<div class="container my-2">
 <h2 class="text-center mb-4">XCL Player Registration</h2>
 
 <!-- Progress Tracker -->

@@ -1,5 +1,9 @@
 <?php
-require 'db.php';
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login_form.php"); 
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -119,11 +123,14 @@ body { background: #f8f9fa; }
 .form-step { display: none; }
 .form-step.active { display: block; }
 .content-area {
-    margin-left: 250px; /* same as .sidebar width */
+    margin-left: 250px; /* already in your code for sidebar space */
+    padding-top: 80px;  /* adjust this for your topbar height (e.g. 60–100px) */
 }
+
 @media (max-width: 600px) {
     .content-area {
         margin-left: 60px;
+        padding-top: 80px; /* keep same top spacing on mobile */
     }
 }
 
@@ -158,7 +165,8 @@ body { background: #f8f9fa; }
 </style>
 </head>
 <body>
-<?php require ('header.php'); ?>
+<?php require ('topbar.php');?>
+<?php require ('sidebar.php');?>
 <div class="content-area">
 <div class="container my-4">
 <h2 class="text-center mb-4">XCL Staff Registration</h2>

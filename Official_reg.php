@@ -1,5 +1,9 @@
 <?php
-require 'db.php';
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login_form.php"); 
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $uploadDir = 'uploads/';
@@ -94,8 +98,6 @@ if ($stmt->execute()) {
 }
 ?>
 
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -119,8 +121,20 @@ body { background: #f8f9fa; }
     display: flex; align-items: center; justify-content: center;
     font-weight: bold; color: #fff;
 }
-.content-area { margin-left: 250px; }
-@media (max-width: 600px) { .content-area { margin-left: 60px; } }
+
+/* Push content down below fixed topbar */
+.content-area {
+    margin-left: 250px; /* space for sidebar */
+    padding-top: 80px;  /* adjust this to match your topbar height */
+}
+@media (max-width: 600px) {
+    .content-area {
+        margin-left: 60px;
+        padding-top: 80px; /* keep same top spacing for mobile */
+    }
+}
+
+
 .progress-step.active { background-color: #00cd8a; }
 .form-step { display: none; }
 .form-step.active { display: block; }
@@ -156,8 +170,8 @@ body { background: #f8f9fa; }
 </style>
 </head>
 <body>
-<?php require ('header.php');?>
-
+<?php require ('topbar.php');?>
+<?php require ('sidebar.php');?>
 <div class="content-area">
 <div class="container my-4">
 <h2 class="text-center mb-4">XCL Other Staff Registration Form</h2>

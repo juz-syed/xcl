@@ -30,6 +30,7 @@
         margin: 0;
         background: #fff;
         border-bottom: 1px solid #ddd;
+        text-align: center;
     }
     .sidebar ul {
         list-style: none;
@@ -62,7 +63,7 @@
         right: 0;
         transition: left 0.3s;
     }
-    .collapsed + .topbar {
+    .sidebar.collapsed + .topbar {
         left: 60px;
     }
     .topbar input {
@@ -79,7 +80,7 @@
         flex: 1;
         transition: margin-left 0.3s;
     }
-    .collapsed + .topbar + .content {
+    .sidebar.collapsed ~ .content {
         margin-left: 60px;
     }
     /* Toggle button */
@@ -91,15 +92,20 @@
 </head>
 <body>
 
+<!-- Sidebar -->
 <div class="sidebar" id="sidebar">
     <h2>Xtreme League</h2>
     <ul>
         <li onclick="location.href='player_reg.php'">Players Registration</li>
         <li onclick="location.href='staff_reg.php'">Staff Registration</li>
         <li onclick="location.href='Official_reg.php'">Official Staff Registration</li>
+        <li onclick="location.href='change_password.php'">Change Password</li>
+        <li onclick="location.href='profile.php'">Profile</li>
+        <li onclick="location.href='logout_form.php'">Logout</li>
     </ul>
 </div>
 
+<!-- Topbar -->
 <div class="topbar" id="topbar">
     <span class="toggle-btn" onclick="toggleSidebar()">&#9776;</span>
     <div style="flex:1; display:flex; justify-content:center;">
@@ -110,3 +116,12 @@
         <img src="user.jpg" alt="user" style="width:30px; height:30px; border-radius:50%; margin-left:10px;">
     </div>
 </div>
+
+<script>
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('collapsed');
+}
+</script>
+
+</body>
+</html>
