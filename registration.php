@@ -77,9 +77,10 @@
 
 <div class="container">
     <h1>Choose Registration Type</h1>
-    <a href="player_reg.php" class="btn">Player Registration</a>
-    <a href="staff_reg.php" class="btn">Staff Registration</a>
-    <a href="official_reg.php" class="btn">Official Staff Registration</a>
+    <a href="login_form.php?type=player" class="btn">Player Registration</a>
+<a href="login_form.php?type=staff" class="btn">Staff Registration</a>
+<a href="login_form.php?type=official" class="btn">Official Staff Registration</a>
+
 </div>
 
 </body>

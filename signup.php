@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             background: rgba(255, 255, 255, 0.95);
             box-shadow: 0px 8px 30px rgba(0,0,0,0.3);
             padding: 30px;
-            width: 350px;
+            width: 380px;
             animation: fadeIn 0.6s ease-in-out;
         }
         @keyframes fadeIn {
@@ -122,12 +122,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             transition: all 0.3s ease;
         }
         .btn-custom:hover {
-            background: linear-gradient(90deg,  #424344ff, #424344ff);
+            background: linear-gradient(90deg, #2d2d2d, #2d2d2d);
             transform: scale(1.05);
         }
         label { font-weight: 600; color: #333; }
         .alert { padding: 8px; font-size: 14px; opacity: 0; transform: translateY(-10px); transition: opacity 0.5s, transform 0.5s; }
         .alert.show { opacity: 1; transform: translateY(0); }
+
+        /* Profile photo preview */
+        .profile-pic-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        .profile-pic {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #ddd url('default.jpg') center/cover no-repeat; /* Default avatar */
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+        }
+        .profile-pic img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .camera-icon {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            padding: 6px;
+            border-radius: 50%;
+            font-size: 14px;
+            opacity: 1; /* always visible */
+        }
     </style>
 </head>
 <body class="d-flex justify-content-center align-items-center">
@@ -148,14 +181,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form method="POST" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
 
-        <div class="mb-3">
-            <label>Full Name</label>
-            <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($name) ?>" required>
+        <div class="profile-pic-wrapper">
+            <div class="profile-pic" id="profilePreview">
+                <span class="camera-icon">📷</span>
+            </div>
+            <input type="file" id="profilePhoto" name="profile_photo" class="d-none" accept="image/*" required>
         </div>
 
         <div class="mb-3">
-            <label>Profile Photo</label>
-            <input type="file" name="profile_photo" class="form-control" accept="image/*" required>
+            <label>Full Name</label>
+            <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($name) ?>" required>
         </div>
 
         <div class="mb-3">
@@ -174,7 +209,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </form>
 </div>
+
 <script>
+document.getElementById('profilePreview').addEventListener('click', function () {
+    document.getElementById('profilePhoto').click();
+});
+
+document.getElementById('profilePhoto').addEventListener('change', function (event) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        document.getElementById('profilePreview').style.backgroundImage = `url('${e.target.result}')`;
+    };
+    reader.readAsDataURL(event.target.files[0]);
+});
+
+// Auto hide alerts after 5s
 setTimeout(() => {
     document.querySelectorAll('.alert').forEach(alert => alert.classList.remove('show'));
 }, 5000);

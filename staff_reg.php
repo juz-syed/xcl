@@ -1,99 +1,16 @@
 <?php
-session_start();
-require('db.php');
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login_form.php"); 
-    exit;
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    // Use defaults if not set
-    $full_name = $_POST['full_name'] ?? '';
-    $dob = $_POST['dob'] ?? '';
-    $gender = $_POST['gender'] ?? '';
-    $nationality = $_POST['nationality'] ?? '';
-    $address = $_POST['address'] ?? '';
-    $city = $_POST['city'] ?? '';
-    $state = $_POST['state'] ?? '';
-    $country = $_POST['country'] ?? '';
-    $mobile = $_POST['mobile'] ?? '';
-    $email = $_POST['email'] ?? '';
-    $id_type = $_POST['id_type'] ?? '';
-    $id_number = $_POST['id_number'] ?? '';
-    $categories = $_POST['categories'] ?? 'N/A'; // default value
-    $highest_level = $_POST['highest_level'] ?? '';
-    $availability = $_POST['availability'] ?? '';
-    $familiar_cricket = $_POST['familiar_cricket'] ?? '';
-    $open_training = $_POST['open_training'] ?? '';
-    $travel_international = $_POST['travel_international'] ?? '';
-    $valid_passport = isset($_POST['valid_passport']) ? 1 : 0;
-    $confirm = isset($_POST['confirm']) ? 1 : 0;
-    $conduct = isset($_POST['conduct']) ? 1 : 0;
-
-    $sql = "INSERT INTO staff_reg (
-        full_name, dob, gender, nationality, address, city, state, country,
-        mobile, email, id_type, id_number, categories, highest_level,
-        availability, familiar_cricket, open_training, travel_international,
-        valid_passport, confirm, conduct
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-    $stmt = $conn->prepare($sql);
-
-    $stmt->bind_param(
-        "ssssssssssssssssssiii",
-        $full_name,
-        $dob,
-        $gender,
-        $nationality,
-        $address,
-        $city,
-        $state,
-        $country,
-        $mobile,
-        $email,
-        $id_type,
-        $id_number,
-        $categories,
-        $highest_level,
-        $availability,
-        $familiar_cricket,
-        $open_training,
-        $travel_international,
-        $valid_passport,
-        $confirm,
-        $conduct
-    );
-
-if ($stmt->execute()) {
-    echo "
-    <div id='customAlert' class='alert-box success'>
-        Staff Registration Successful!
-    </div>
-    <script>
-        setTimeout(function(){
-            window.location.href = 'login_form.php';
-        }, 2000);
-    </script>
-    ";
-} else {
-    echo "
-    <div id='customAlert' class='alert-box error'>
-        Error: Unable to register staff.
-    </div>
-    <script>
-        setTimeout(function(){
-            window.location.href = 'login_form.php';
-        }, 2000);
-    </script>
-    ";
-}
-
-
-    $stmt->close();
-    $conn->close();
-}
+$required_type = 'staff';
+include 'check_access.php';
 ?>
+
+
+
+<h1>Staff Registration Form</h1>
+<!-- Your form HTML here -->
+
+
+
+
 
 
 

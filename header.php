@@ -26,7 +26,7 @@
 
                     <!-- Buttons -->
                     <div class="d-flex justify-content-end">
-                        <a href="login_form.php" class="btn btn-primary header-btn me-2">Registration</a>
+                        <a href="registration.php" class="btn btn-primary header-btn me-2">Registration</a>
                         
                     </div>
 

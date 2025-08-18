@@ -1,63 +1,11 @@
 <?php
-session_start();
-require('db.php');
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login_form.php"); 
-    exit;
-}
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
-    $sql = "INSERT INTO player_reg (
-        full_name, dob, gender, nationality, address, city, state, country,
-        mobile, whatsapp, email, alt_email, id_type, id_number, photo_id,
-        passport_photo, resume_profile, cricket_certifications, batting_style,
-        bowling_style, primary_role, secondary_role, experience_years, highest_level,
-        club_team, jersey_size, citizen_franchise, played_t20, t20_details,
-        familiar_rules, open_training, weight_kg, height_cm, medical_conditions,
-        medication, fit_for_cricket, availability, travel_international,
-        valid_passport, passport_expiry, emergency_name, emergency_relation,
-        emergency_contact, emergency_email, confirm, conduct
-    ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
-
-    $stmt = $conn->prepare($sql);
-
-$stmt->bind_param(
-    "ssssssssssssssssssssssssssssssssssssssssssssss",
-    $_POST['full_name'], $_POST['dob'], $_POST['gender'], $_POST['nationality'], $_POST['address'], $_POST['city'], $_POST['state'], $_POST['country'], $_POST['mobile'], $_POST['whatsapp'], $_POST['email'], $_POST['alt_email'],
-    $_POST['id_type'], $_POST['id_number'], $_POST['photo_id'], $_POST['passport_photo'], $_POST['resume_profile'], $_POST['cricket_certifications'], $_POST['batting_style'], $_POST['bowling_style'], $_POST['primary_role'], $_POST['secondary_role'], $_POST['experience_years'], $_POST['highest_level'], $_POST['club_team'], $_POST['jersey_size'], $_POST['citizen_franchise'],
-    $_POST['played_t20'], $_POST['t20_details'], $_POST['familiar_rules'], $_POST['open_training'], $_POST['weight_kg'], $_POST['height_cm'], $_POST['medical_conditions'], $_POST['medication'], $_POST['fit_for_cricket'], $_POST['availability'], $_POST['travel_international'], $_POST['valid_passport'], $_POST['passport_expiry'],
-    $_POST['emergency_name'], $_POST['emergency_relation'], $_POST['emergency_contact'], $_POST['emergency_email'], $_POST['confirm'], $_POST['conduct']
-);
-
-if ($stmt->execute()) {
-    echo "
-    <div id='customAlert' class='alert-box success'>
-        Player registration successful!
-    </div>
-    <script>
-        setTimeout(function(){
-            window.location.href = 'login_form.php';
-        }, 1000);
-    </script>
-    ";
-} else {
-    echo "
-    <div id='customAlert' class='alert-box error'>
-        Error: Unable to register player.
-    </div>
-    <script>
-        setTimeout(function(){
-            window.location.href = 'login_form.php';
-        }, 1000);
-    </script>
-    ";
-}
-
-    $stmt->close();
-    $conn->close();
-}
+$required_type = 'player';
+include 'check_access.php';
 ?>
+<h1>Player Registration Form</h1>
+<!-- Your form HTML here -->
+
+
 
 <!DOCTYPE html>
 <html lang="en">
