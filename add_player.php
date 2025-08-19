@@ -5,9 +5,18 @@ require 'db.php';
 $name = $position = $nationality = $matches = $age = $jersey_number = $team = $image = "";
 $edit_id = null;
 
+// SHOW MESSAGE (flash)
+function flashMessage() {
+    if (!empty($_SESSION['msg'])) {
+        echo '<div style="margin:15px 0;" class="alert alert-' . $_SESSION['msg_type'] . '">' . $_SESSION['msg'] . '</div>';
+        unset($_SESSION['msg']);
+        unset($_SESSION['msg_type']);
+    }
+}
+
 // EDIT MODE – Prefill form values
 if (isset($_GET['edit'])) {
-    $edit_id = $_GET['edit'];
+    $edit_id = (int)$_GET['edit'];
     $edit_query = $conn->prepare("SELECT * FROM players WHERE id = ?");
     $edit_query->bind_param("i", $edit_id);
     $edit_query->execute();
@@ -51,7 +60,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $_POST['team'],
             $image_name
         );
-        $stmt->execute();
+        if ($stmt->execute()) {
+            $_SESSION['msg'] = "✅ Player added successfully!";
+            $_SESSION['msg_type'] = "success";
+        } else {
+            $_SESSION['msg'] = "❌ Error adding player.";
+            $_SESSION['msg_type'] = "danger";
+        }
         $stmt->close();
     }
 
@@ -81,7 +96,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $image_name,
             $_POST['id']
         );
-        $stmt->execute();
+        if ($stmt->execute()) {
+            $_SESSION['msg'] = "✅ Player updated successfully!";
+            $_SESSION['msg_type'] = "success";
+        } else {
+            $_SESSION['msg'] = "❌ Error updating player.";
+            $_SESSION['msg_type'] = "danger";
+        }
         $stmt->close();
     }
 
@@ -91,8 +112,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 // DELETE
 if (isset($_GET['delete'])) {
-    $id = $_GET['delete'];
-    $conn->query("DELETE FROM players WHERE id = $id");
+    $id = (int)$_GET['delete'];
+    $stmt = $conn->prepare("DELETE FROM players WHERE id = ?");
+    $stmt->bind_param("i", $id);
+    if ($stmt->execute()) {
+        $_SESSION['msg'] = "✅ Player deleted successfully!";
+        $_SESSION['msg_type'] = "success";
+    } else {
+        $_SESSION['msg'] = "❌ Error deleting player.";
+        $_SESSION['msg_type'] = "danger";
+    }
+    $stmt->close();
     header("Location: add_player.php");
     exit;
 }
@@ -105,21 +135,18 @@ $players = $conn->query("SELECT * FROM players");
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>add_player - Player Management</title>
+  <title>Add Player - Player Management</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="assets/css/main.css" rel="stylesheet" media="screen">
   <link rel="shortcut icon" href="img/icons/favicon.ico">
-  <!-- DataTables CSS -->
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
+  <!-- Bootstrap + DataTables -->
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 </head>
 <body>
 
-<?php require('header.php'); 
-require('navbar.php'); 
-// require 'dashboard.php';
-?>
+<?php require('header.php'); require('navbar.php'); ?>
 
 <div id="layout">
   <div class="section-title" style="background:url(img/slide/group.jpeg)">
@@ -137,6 +164,10 @@ require('navbar.php');
 
   <section class="content-info">
     <div class="container padding-top">
+
+      <!-- Flash Messages -->
+      <?php flashMessage(); ?>
+
       <!-- Form -->
       <div class="panel panel-default">
         <div class="panel-heading" style="background-color: #909593ff; color: white; padding: 15px;">
@@ -178,31 +209,26 @@ require('navbar.php');
                 <label>Jersey No</label>
                 <input type="number" class="form-control" name="jersey_number" required value="<?= htmlspecialchars($jersey_number) ?>">
               </div>
-<div class="col-md-3">
-    <label>Team</label>
-    <select name="team" class="form-control" required>
-        <option value="">-- Select Team --</option>
-        <?php
-        // Fetch teams from Teams table
-        $teams_result = $conn->query("SELECT team_name FROM Teams ORDER BY team_name ASC");
-        while ($team_row = $teams_result->fetch_assoc()):
-            $selected = ($team_row['team_name'] === $team) ? 'selected' : '';
-        ?>
-            <option value="<?= htmlspecialchars($team_row['team_name']) ?>" <?= $selected ?>>
-                <?= htmlspecialchars($team_row['team_name']) ?>
-            </option>
-        <?php endwhile; ?>
-    </select>
-</div>
-
-<div class="col-md-3">
-  <label>Player Image</label>
-  <input type="file" class="form-control" name="image">
-  <?php if ($edit_id && $image): ?>
-    <small>Current: <strong><?= htmlspecialchars($image) ?></strong></small>
-  <?php endif; ?>
-</div>
-
+              <div class="col-md-3">
+                <label>Team</label>
+                <select name="team" class="form-control" required>
+                    <option value="">-- Select Team --</option>
+                    <?php
+                    $teams_result = $conn->query("SELECT team_name FROM Teams ORDER BY team_name ASC");
+                    while ($team_row = $teams_result->fetch_assoc()):
+                        $selected = ($team_row['team_name'] === $team) ? 'selected' : '';
+                    ?>
+                        <option value="<?= htmlspecialchars($team_row['team_name']) ?>" <?= $selected ?>>
+                            <?= htmlspecialchars($team_row['team_name']) ?>
+                        </option>
+                    <?php endwhile; ?>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label>Player Image</label>
+                <input type="file" class="form-control" name="image">
+                
+              </div>
               <div class="col-md-12 text-right" style="margin-top: 15px;">
                 <button type="submit" name="<?= $edit_id ? 'update_player' : 'add_player' ?>" class="btn btn-primary">
                   <?= $edit_id ? 'Update Player' : 'Add Player' ?>
@@ -220,44 +246,42 @@ require('navbar.php');
         </div>
         <div class="panel-body" style="padding: 20px; background: #fff;">
           <div class="table-responsive">
-<table id="playersTable" class="table table-bordered table-striped">
-  <thead style="background-color: #f0f0f0;">
-    <tr>
-      <th>ID</th>
-      <th>Name</th>
-      <th>Position</th>
-      <th>Nationality</th>
-      <th>Matches</th>
-      <th>Age</th>
-      <th>Jersey</th>
-      <th>Team</th>
-      <th>Image</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-
+            <table id="playersTable" class="table table-bordered table-striped">
+              <thead style="background-color: #f0f0f0;">
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Position</th>
+                  <th>Nationality</th>
+                  <th>Matches</th>
+                  <th>Age</th>
+                  <th>Jersey</th>
+                  <th>Team</th>
+                  <th>Image</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
               <tbody>
                 <?php $serial = 1; while($row = $players->fetch_assoc()): ?>
                   <tr>
                     <td><?= $serial++ ?></td>
                     <td><?= htmlspecialchars($row['name']) ?></td>
-                    <td><?= $row['position'] ?></td>
-                    <td><?= $row['nationality'] ?></td>
+                    <td><?= htmlspecialchars($row['position']) ?></td>
+                    <td><?= htmlspecialchars($row['nationality']) ?></td>
                     <td><?= $row['matches'] ?></td>
                     <td><?= $row['age'] ?></td>
                     <td><?= $row['jersey_number'] ?></td>
-                    <td><?= $row['team'] ?></td>
-<td>
-  <img src="img/players/<?= $row['image'] ?>" style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px; display: block; margin: 0 auto;">
-</td>
+                    <td><?= htmlspecialchars($row['team']) ?></td>
                     <td>
-                      <a href="dashboard.php?edit=<?= $row['id'] ?>" class="btn btn-xs btn-info" title="Edit">
-  <i class="fa fa-edit"></i>
-</a>
-<a href="dashboard.php?delete=<?= $row['id'] ?>" class="btn btn-xs btn-danger" title="Delete" onclick="return confirm('Delete this player?');">
-  <i class="fa fa-trash"></i>
-</a>
-
+                      <?php if ($row['image']): ?>
+                        <img src="img/players/<?= htmlspecialchars($row['image']) ?>" style="width: 60px; height: 60px; object-fit: cover; border-radius: 5px;">
+                      <?php else: ?>
+                        <span>No Image</span>
+                      <?php endif; ?>
+                    </td>
+                    <td>
+                      <a href="add_player.php?edit=<?= $row['id'] ?>" class="btn btn-xs btn-info" title="Edit"><i class="fa fa-edit"></i></a>
+                      <a href="add_player.php?delete=<?= $row['id'] ?>" class="btn btn-xs btn-danger" title="Delete" onclick="return confirm('Delete this player?');"><i class="fa fa-trash"></i></a>
                     </td>
                   </tr>
                 <?php endwhile; ?>
@@ -276,9 +300,6 @@ require('navbar.php');
 <script src="assets/js/jquery.js"></script>
 <script src="assets/js/popper.min.js"></script>
 <script src="assets/js/bootstrap.min.js"></script>
-<script src="assets/js/theme-scripts.js"></script>
-<script src="assets/js/theme-main.js"></script>
-<!-- DataTables JS -->
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script>
   $(document).ready(function() {
@@ -286,7 +307,7 @@ require('navbar.php');
       responsive: true,
       autoWidth: false,
       pageLength: 5,
-      lengthMenu: [ [5, 10, 25, 50, -1], [5, 10, 25, 50, "All"] ]
+      lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]]
     });
   });
 </script>
